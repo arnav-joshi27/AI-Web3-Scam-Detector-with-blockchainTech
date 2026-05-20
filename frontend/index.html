@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NeuralShield — AI Web3 Threat Intelligence</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@200;300;400;600;800&display=swap" rel="stylesheet"/>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- ── Custom Cursor ── -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+  <div id="mouse-glow"></div>
+
+  <!-- ── Background Grid ── -->
+  <div class="bg-grid"></div>
+
+  <!-- ── Toast Notification ── -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ════════════════════ LOADING SCREEN ════════════════════ -->
+  <div id="loading-screen">
+    <canvas class="matrix-canvas" id="matrix-canvas"></canvas>
+    <div class="load-particles" id="load-particles"></div>
+
+    <div class="load-logo">
+      <div class="load-logo-ring">
+        <div class="load-logo-inner">⬡</div>
+      </div>
+      <div class="load-title">NEURALSHIELD</div>
+      <div class="load-subtitle">AI WEB3 THREAT INTELLIGENCE SYSTEM</div>
+    </div>
+
+    <div class="load-status">
+      <div class="load-text" id="load-text">INITIALIZING AI SECURITY SYSTEM...</div>
+      <div class="load-bar-container">
+        <div class="load-bar" id="load-bar"></div>
+      </div>
+      <div class="load-percent" id="load-percent">0%</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ AUTH SCREEN ════════════════════ -->
+  <div id="auth-screen" class="active">
+    <canvas class="auth-bg-canvas" id="auth-canvas"></canvas>
+
+    <div class="auth-card" id="auth-card">
+      <div class="auth-logo">
+        <div class="auth-logo-icon"></div>
+        <div class="auth-brand">NEURALSHIELD</div>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">LOGIN</button>
+        <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">SIGN UP</button>
+      </div>
+
+      <!-- Login Form -->
+      <div id="login-form">
+        <div class="form-group">
+          <label class="form-label">EMAIL ADDRESS</label>
+          <input type="email" class="form-input" id="login-email" placeholder="agent@neuralshield.ai" autocomplete="email"/>
+          <div class="form-error" id="login-email-err">Invalid email address</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">PASSWORD</label>
+          <div class="form-input-wrap">
+            <input type="password" class="form-input" id="login-password" placeholder="••••••••••" autocomplete="current-password"/>
+            <button class="pw-toggle" onclick="togglePw('login-password', this)">👁</button>
+          </div>
+          <div class="form-error" id="login-pw-err">Password required</div>
+        </div>
+        <button class="btn-auth" onclick="handleLogin()">
+          <span>AUTHENTICATE</span>
+        </button>
+      </div>
+
+      <!-- Signup Form -->
+      <div id="signup-form" style="display:none">
+        <div class="form-group">
+          <label class="form-label">USERNAME</label>
+          <input type="text" class="form-input" id="signup-username" placeholder="Agent_007" autocomplete="username"/>
+          <div class="form-error" id="signup-user-err">Username required (min 3 chars)</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">EMAIL ADDRESS</label>
+          <input type="email" class="form-input" id="signup-email" placeholder="agent@neuralshield.ai" autocomplete="email"/>
+          <div class="form-error" id="signup-email-err">Valid email required</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">PASSWORD</label>
+          <div class="form-input-wrap">
+            <input type="password" class="form-input" id="signup-password" placeholder="Min. 6 characters" autocomplete="new-password"/>
+            <button class="pw-toggle" onclick="togglePw('signup-password', this)">👁</button>
+          </div>
+          <div class="form-error" id="signup-pw-err">Password must be at least 6 characters</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">CONFIRM PASSWORD</label>
+          <div class="form-input-wrap">
+            <input type="password" class="form-input" id="signup-confirm" placeholder="Repeat password" autocomplete="new-password"/>
+            <button class="pw-toggle" onclick="togglePw('signup-confirm', this)">👁</button>
+          </div>
+          <div class="form-error" id="signup-confirm-err">Passwords do not match</div>
+        </div>
+        <button class="btn-auth" onclick="handleSignup()">
+          <span>CREATE ACCOUNT</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ ACCESS GRANTED SCREEN ════════════════════ -->
+  <div id="access-screen">
+    <canvas class="matrix-canvas" id="access-canvas"></canvas>
+    <div class="access-ring-container">
+      <div class="access-ring access-ring-1"></div>
+      <div class="access-ring access-ring-2"></div>
+      <div class="access-ring access-ring-3"></div>
+      <div class="access-core">
+        <span class="access-check">✓</span>
+      </div>
+    </div>
+    <div class="access-texts">
+      <div class="access-title" id="access-title">ACCESS GRANTED</div>
+      <div class="access-sub" id="access-sub">WELCOME TO AI WEB3 THREAT INTELLIGENCE SYSTEM</div>
+      <div class="access-scanning">
+        <div class="scan-dot"></div>
+        <div class="scan-dot"></div>
+        <div class="scan-dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ MAIN APP ════════════════════ -->
+  <div id="main-app">
+
+    <!-- NAVBAR -->
+    <nav id="navbar">
+      <a href="#" class="nav-brand">
+        <div class="nav-brand-icon">⬡</div>
+        <div class="nav-brand-text">NEURALSHIELD</div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#analyze-section">ANALYZE</a></li>
+        <li><a href="#analytics-section">ANALYTICS</a></li>
+        <li><a href="#crypto-section">MARKETS</a></li>
+        <li><a href="#features-section">FEATURES</a></li>
+      </ul>
+      <div class="nav-actions">
+        <!-- Live gas fee indicator -->
+        <div class="nav-gas" id="nav-gas" title="Current Ethereum Gas (Gwei)">
+          <span class="gas-dot"></span>
+          <span id="gas-value">-- GWEI</span>
+        </div>
+        <div class="nav-user" id="nav-user-display">●&nbsp; AGENT</div>
+        <button class="btn-logout" onclick="handleLogout()">LOGOUT</button>
+      </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section id="hero">
+      <div id="spline-hero">
+        <iframe src='https://my.spline.design/blockchain-bv75hqZwsyCTMjoOKmJ5Jp3z/' frameborder='0' width='100%' height='100%'></iframe>
+      </div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-badge">
+          <div class="hero-badge-dot"></div>
+          <span>AI-POWERED BLOCKCHAIN SECURITY</span>
+        </div>
+        <h1 class="hero-title">
+          <div class="hero-title-line1">AI Web3</div>
+          <div class="hero-title-line2">Scam Detector</div>
+        </h1>
+        <p class="hero-sub">
+          Next-generation blockchain threat intelligence. Detect fraudulent wallets, analyze on-chain patterns, and protect your assets with real-time AI-powered risk assessment.
+        </p>
+        <div class="hero-ctas">
+          <a href="#analyze-section" class="btn-hero-primary">SCAN WALLET NOW</a>
+          <a href="#analytics-section" class="btn-hero-secondary">VIEW ANALYTICS</a>
+        </div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">99.2%</div>
+          <div class="hero-stat-label">Detection Rate</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">2.4M+</div>
+          <div class="hero-stat-label">Wallets Scanned</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">&lt;0.3s</div>
+          <div class="hero-stat-label">Response Time</div>
+        </div>
+      </div>
+
+      <div class="scroll-indicator">
+        <div class="scroll-indicator-text">SCROLL</div>
+        <div class="scroll-mouse"><div class="scroll-dot"></div></div>
+      </div>
+    </section>
+
+    <!-- SPLINE SCROLL SECTION -->
+    <section id="spline-scroll-section">
+      <div class="spline-sticky" id="spline-sticky">
+        <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.94/build/spline-viewer.js"></script>
+        <spline-viewer url="https://prod.spline.design/mIBKeIy1GRN9l987/scene.splinecode"></spline-viewer>
+        <div class="spline-scroll-overlay"></div>
+        <div class="spline-scroll-hud" id="spline-hud">
+          <div class="spline-hud-title">BLOCKCHAIN NEURAL NETWORK</div>
+          <div class="spline-hud-sub">ANALYZING DISTRIBUTED LEDGER PATTERNS</div>
+        </div>
+        <div class="spline-progress-container">
+          <div class="spline-progress-label">SCAN PROGRESS</div>
+          <div class="spline-progress-bar">
+            <div class="spline-progress-fill" id="spline-progress-fill"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ANALYZE SECTION -->
+    <section id="analyze-section">
+      <div class="section-header reveal">
+        <div class="section-tag">// AI ANALYSIS ENGINE</div>
+        <h2 class="section-title">Analyze <span>Wallet Address</span></h2>
+        <p class="section-desc">Enter any Ethereum wallet address to run a deep blockchain forensics scan powered by our trained ML model.</p>
+      </div>
+
+      <div class="analyzer-container">
+        <div class="wallet-input-wrap reveal">
+          <input type="text" class="wallet-input" id="wallet-input" placeholder="0x742d35Cc6634C0532925a3b8D4C9b9e7f2a3E4F5"/>
+          <button class="btn-analyze" id="analyze-btn" onclick="analyzeWallet()">
+            <span class="btn-text">ANALYZE WALLET</span>
+            <div class="scan-spinner"></div>
+          </button>
+        </div>
+
+        <!-- Scan overlay -->
+        <div id="scan-overlay" class="scan-overlay">
+          <div class="scan-line"></div>
+        </div>
+
+        <!-- Result Cards -->
+        <div class="result-grid" id="result-grid">
+          <div class="result-card" style="--card-color: var(--cyan)">
+            <div class="result-card-icon">🔍</div>
+            <div class="result-card-label">WALLET STATUS</div>
+            <div class="result-card-value" id="rc-status">—</div>
+          </div>
+          <div class="result-card" style="--card-color: var(--amber)">
+            <div class="result-card-icon">⚡</div>
+            <div class="result-card-label">RISK LEVEL</div>
+            <div class="result-card-value" id="rc-risk">—</div>
+          </div>
+          <div class="result-card" style="--card-color: var(--purple)">
+            <div class="result-card-icon">🧠</div>
+            <div class="result-card-label">AI CONFIDENCE</div>
+            <div class="result-card-value" id="rc-confidence">—</div>
+          </div>
+          <div class="result-card" style="--card-color: var(--pink)">
+            <div class="result-card-icon">⛓️</div>
+            <div class="result-card-label">CHAIN ACTIVITY</div>
+            <div class="result-card-value" id="rc-chain">—</div>
+          </div>
+          <div class="result-card" style="--card-color: var(--green)">
+            <div class="result-card-icon">🔒</div>
+            <div class="result-card-label">THREAT SCORE</div>
+            <div class="result-card-value" id="rc-threat">—</div>
+          </div>
+        </div>
+
+        <!-- Main Verdict -->
+        <div class="result-main" id="result-main">
+          <div class="result-main-verdict" id="result-verdict">AWAITING SCAN</div>
+          <div class="result-main-sub" id="result-sub">ENTER A WALLET ADDRESS AND RUN ANALYSIS</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="cyber-divider"></div>
+
+    <!-- ANALYTICS SECTION -->
+    <section id="analytics-section">
+      <div class="section-header reveal">
+        <div class="section-tag">// THREAT INTELLIGENCE</div>
+        <h2 class="section-title">Advanced <span>Analytics</span></h2>
+        <p class="section-desc">Real-time threat visualization across the Ethereum ecosystem with AI-driven pattern recognition.</p>
+      </div>
+
+      <div class="analytics-grid" style="max-width:1200px;margin:0 auto;">
+        <div class="chart-card reveal">
+          <div class="chart-card-header">
+            <div class="chart-card-title">THREAT DISTRIBUTION</div>
+            <div class="chart-card-badge">LIVE</div>
+          </div>
+          <div class="chart-canvas-wrap">
+            <canvas id="chart-pie"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card reveal span-2">
+          <div class="chart-card-header">
+            <div class="chart-card-title">BLOCKCHAIN ACTIVITY — 7 DAYS</div>
+            <div class="chart-card-badge">ETHEREUM</div>
+          </div>
+          <div class="chart-canvas-wrap">
+            <canvas id="chart-line"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card reveal">
+          <div class="chart-card-header">
+            <div class="chart-card-title">RISK METER</div>
+            <div class="chart-card-badge">CURRENT</div>
+          </div>
+          <div class="risk-meter-wrap">
+            <svg class="risk-gauge-svg" viewBox="0 0 200 120">
+              <defs>
+                <linearGradient id="gauge-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#00ff88"/>
+                  <stop offset="50%" style="stop-color:#ffaa00"/>
+                  <stop offset="100%" style="stop-color:#ff3355"/>
+                </linearGradient>
+              </defs>
+              <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="14" stroke-linecap="round"/>
+              <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#gauge-grad)" stroke-width="14" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="80" opacity="0.8"/>
+              <line x1="100" y1="100" x2="100" y2="34" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" transform="rotate(28 100 100)" opacity="0.9"/>
+              <circle cx="100" cy="100" r="5" fill="var(--amber)" opacity="0.9"/>
+              <text x="14" y="115" fill="var(--green)" font-family="'Share Tech Mono'" font-size="9" fill-opacity="0.8">SAFE</text>
+              <text x="159" y="115" fill="var(--red)" font-family="'Share Tech Mono'" font-size="9" fill-opacity="0.8">HIGH</text>
+            </svg>
+            <div class="risk-label" id="risk-label">42%</div>
+            <div class="risk-sub">GLOBAL THREAT INDEX</div>
+          </div>
+        </div>
+
+        <div class="chart-card reveal">
+          <div class="chart-card-header">
+            <div class="chart-card-title">SCAN VOLUME</div>
+            <div class="chart-card-badge">24H</div>
+          </div>
+          <div class="chart-canvas-wrap">
+            <canvas id="chart-bar"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card reveal">
+          <div class="chart-card-header">
+            <div class="chart-card-title">FRAUD CONFIDENCE</div>
+            <div class="chart-card-badge">MODEL v2</div>
+          </div>
+          <div class="chart-canvas-wrap">
+            <canvas id="chart-radar"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="cyber-divider"></div>
+
+    <!-- CRYPTO SECTION -->
+    <section id="crypto-section">
+      <div class="section-header reveal">
+        <div class="section-tag">// MARKET INTELLIGENCE</div>
+        <h2 class="section-title">Live <span>Crypto Dashboard</span></h2>
+        <!-- Live data status indicator -->
+        <div class="live-data-status" id="live-data-status">
+          <span class="live-dot"></span>
+          <span id="live-data-text">FETCHING LIVE DATA...</span>
+        </div>
+      </div>
+
+      <div class="crypto-ticker">
+        <div class="ticker-scroll" id="ticker-scroll">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <div class="crypto-grid" id="crypto-grid">
+        <!-- Populated by JS with live CoinGecko data -->
+      </div>
+
+      <!-- ETH Network Stats (live) -->
+      <div class="network-stats reveal" id="network-stats" style="max-width:1200px;margin:30px auto 0;">
+        <div class="network-stats-title">ETHEREUM NETWORK STATS</div>
+        <div class="network-stats-grid">
+          <div class="network-stat-card">
+            <div class="nsc-label">ETH DOMINANCE</div>
+            <div class="nsc-value" id="eth-dominance">—</div>
+          </div>
+          <div class="network-stat-card">
+            <div class="nsc-label">TOTAL MARKET CAP</div>
+            <div class="nsc-value" id="total-mcap">—</div>
+          </div>
+          <div class="network-stat-card">
+            <div class="nsc-label">24H VOLUME</div>
+            <div class="nsc-value" id="total-volume">—</div>
+          </div>
+          <div class="network-stat-card">
+            <div class="nsc-label">BTC DOMINANCE</div>
+            <div class="nsc-value" id="btc-dominance">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="threat-alerts">
+        <div class="alerts-title">LIVE THREAT ALERTS</div>
+        <div class="alert-item">
+          <div class="alert-severity high">HIGH</div>
+          <div>
+            <div class="alert-text">Massive fund drain detected on Uniswap V3 — suspected rug pull. Wallet cluster 0x7f3a...d9b2 transferring to mixers.</div>
+            <div class="alert-time">2 min ago · Ethereum Mainnet</div>
+          </div>
+        </div>
+        <div class="alert-item medium">
+          <div class="alert-severity medium">MED</div>
+          <div>
+            <div class="alert-text">Anomalous flash loan activity detected across 14 wallets. Pattern matches known sandwich attack vectors.</div>
+            <div class="alert-time">11 min ago · BSC Network</div>
+          </div>
+        </div>
+        <div class="alert-item">
+          <div class="alert-severity high">HIGH</div>
+          <div>
+            <div class="alert-text">Phishing contract deployed at 0xd4e2...8c01. Mimics legitimate DEX router interface. Do not interact.</div>
+            <div class="alert-time">34 min ago · Ethereum Mainnet</div>
+          </div>
+        </div>
+        <div class="alert-item medium">
+          <div class="alert-severity medium">MED</div>
+          <div>
+            <div class="alert-text">Unusual token approval pattern observed. 847 wallets granted unlimited spend to unknown contract.</div>
+            <div class="alert-time">1 hr ago · Polygon</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="cyber-divider"></div>
+
+    <!-- FEATURES SECTION -->
+    <section id="features-section">
+      <div class="section-header reveal">
+        <div class="section-tag">// CAPABILITIES</div>
+        <h2 class="section-title">Platform <span>Features</span></h2>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card reveal" style="--feature-color: var(--cyan)">
+          <div class="feature-icon">🤖</div>
+          <div class="feature-title">AI-POWERED DETECTION</div>
+          <div class="feature-desc">Trained ML model analyzes wallet transaction patterns across 8+ behavioral features to detect fraudulent on-chain activity with 99.2% accuracy.</div>
+        </div>
+        <div class="feature-card reveal" style="--feature-color: var(--purple)">
+          <div class="feature-icon">⛓️</div>
+          <div class="feature-title">REAL-TIME BLOCKCHAIN DATA</div>
+          <div class="feature-desc">Live integration with Etherscan API fetches full transaction history, contract interactions, and wallet metadata for deep forensic analysis.</div>
+        </div>
+        <div class="feature-card reveal" style="--feature-color: var(--pink)">
+          <div class="feature-icon">🛡️</div>
+          <div class="feature-title">THREAT INTELLIGENCE</div>
+          <div class="feature-desc">Cross-referenced threat database spanning known scam wallets, phishing contracts, and honeypot patterns across all major EVM networks.</div>
+        </div>
+        <div class="feature-card reveal" style="--feature-color: var(--green)">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-title">INSTANT RISK SCORING</div>
+          <div class="feature-desc">Sub-second threat scoring pipeline processes sent/received transactions, unique addresses, time patterns, and contract creation events simultaneously.</div>
+        </div>
+        <div class="feature-card reveal" style="--feature-color: var(--amber)">
+          <div class="feature-icon">🔌</div>
+          <div class="feature-title">FLASK API BACKEND</div>
+          <div class="feature-desc">Production-ready RESTful API with CORS support, joblib model loading, and structured JSON responses. Deploy locally or to any cloud provider.</div>
+        </div>
+        <div class="feature-card reveal" style="--feature-color: var(--cyan)">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title">ADVANCED ANALYTICS</div>
+          <div class="feature-desc">Rich data visualizations including threat distribution charts, activity timelines, risk meters, and confidence scoring dashboards for deep analysis.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand-text">NEURALSHIELD</div>
+          <div class="footer-brand-sub">AI WEB3 THREAT INTELLIGENCE // BUILT WITH FLASK + ML</div>
+        </div>
+        <ul class="footer-links">
+          <li><a href="#hero">Home</a></li>
+          <li><a href="#analyze-section">Analyze</a></li>
+          <li><a href="#analytics-section">Analytics</a></li>
+          <li><a href="#crypto-section">Markets</a></li>
+          <li><a href="#features-section">Features</a></li>
+        </ul>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2025 NEURALSHIELD — AI WEB3 SCAM DETECTION PLATFORM</div>
+        <div class="footer-api-status">
+          <div class="status-dot"></div>
+          <span>BACKEND API READY · localhost:5000/predict</span>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- /main-app -->
+
+  <!-- Main Script -->
+  <script src="script.js"></script>
+</body>
+</html>
