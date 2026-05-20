@@ -16,7 +16,7 @@ const API = {
   COINGECKO_PRICES: 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,binancecoin,solana,avalanche-2,matic-network&vs_currencies=usd&include_24hr_change=true&include_market_cap=true&include_24hr_vol=true',
   COINGECKO_GLOBAL: 'https://api.coingecko.com/api/v3/global',
   COINGECKO_CHART:  (id) => `https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=7&interval=daily`,
-  BACKEND_PREDICT:  'http://localhost:5000/predict',
+  BACKEND_PREDICT:  'https://neuralshield-api.onrender.com/predict',
   // Etherscan gas — add your key in .env; frontend reads process.env via bundler
   // or just keep empty string to skip gas fetch
   ETHERSCAN_GAS:    'https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=YourApiKeyToken',
