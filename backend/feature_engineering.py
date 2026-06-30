@@ -10,10 +10,10 @@ total_received = 0
 total_sent = 0
 
 failed_transactions = 0
-# total_transactions	- number of transactions
-# total_received	- ETH received
-# total_sent	- ETH sent
-# failed_transactions	- failed tx count
+# total_transactions- number of transactions
+# total_received- ETH received
+# total_sent- ETH sent
+# failed_transactions- failed tx count
 for tx in transactions:
     value = int(tx["value"])
     if tx["to"].lower() == wallet.lower():
