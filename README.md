@@ -1,4 +1,4 @@
-# NeuralShield — AI Web3 Scam Detection Platform
+# NeuralShield — AI-Powered Web3 Scam Detection Platform
 
 NeuralShield is an AI-powered Web3 cybersecurity platform that analyzes Ethereum wallet activity and predicts potentially suspicious or scam-related behavior using Machine Learning and blockchain analytics.
 
