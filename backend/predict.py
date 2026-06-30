@@ -2,7 +2,6 @@
 import joblib
 import pandas as pd
 from fetch_data import get_transactions
-
 model = joblib.load("model/best_model.pkl")
 
 wallet = "0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe"
