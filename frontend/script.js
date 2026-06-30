@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   script.js — NeuralShield AI Web3 Threat Intelligence
+   script.js — NeuralShield AI Powered Web3 Threat Intelligence
    All JS: cursor, matrix, auth, charts, wallet analyzer,
            scroll effects, live CoinGecko data, gas fees
 ═══════════════════════════════════════════════════════════════ */
