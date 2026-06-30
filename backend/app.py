@@ -47,7 +47,7 @@ def predict():
 
         transactions = tx_data.get("result", [])
 
-        # Handle API Errors
+        # Handle all API Errors
         if not isinstance(transactions, list):
             return jsonify({
 
