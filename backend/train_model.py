@@ -1,1 +1,1 @@
-#trains ML model
+#trains the Machine Learning model
